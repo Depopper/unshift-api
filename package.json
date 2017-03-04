@@ -4,6 +4,7 @@
   "description": "",
   "main": "unshift-api.js",
   "scripts": {
+    "start": "node unshift-api.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
