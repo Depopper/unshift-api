@@ -65,6 +65,54 @@ exports.login = (req, res) => {
         })
     })
 }
+
+exports.newPassword = (req, res) => {
+    token = req.body.token
+    oldPassword = req.body.oldPassword
+    password = req.body.password
+    passwordConfirmation = req.body.passwordConfirmation
+    
+    jwt.decode(secret_key, token, function (err, decodedPayload, decodedHeader) {
+        if (err) {
+            console.error(err.name, err.message);
+            return res.status(400).json("erreur 1")
+        }
+        User.findFirst({email: decodedPayload.email}, (err, user) => {
+            console.log(decodedPayload)
+            if (!user)
+                return res.status(400).json("erreur 2")
+            bcrypt.compare(oldPassword, user.password, (err, valid) => {
+                if(!valid)
+                    return res.status(400).json("erreur 3")
+                if (password != passwordConfirmation)
+                    return res.status(400).json("erreur 4")
+                bcrypt.hash(password, 10, (err, hash) => {
+                    console.log(hash)
+                    user.password = hash
+                    user.save((err) => {
+                        if (err)
+                            return res.status(400).json(err)
+                        else
+                            return res.json("All is good")
+                     })
+                })
+            })
+        })
+    });
+}
+
+exports.delete = (req, res) => {
+    var _id = req.body.id
+    if (_id == "" || _id == undefined || !_id)
+        return res.status(400).json({error: "id invalid"})
+    User.findByIdAndRemove(_id, (err, user) => {
+        console.log(`erreur: ${err}`)
+        console.log(`user: ${user}`)
+        if(!err)
+        res.json({status: 'OK'})
+    })
+}
+
 var permit = (object, params) =>{
     for(var key in object)
     {

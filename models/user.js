@@ -14,9 +14,6 @@ var userSchema = new Schema({
     updated_at: {type: String, default: new Date}
 })
 
-userSchema.pre('save', function(next){
-    next()
-})
 
 var User = mongoose.model('User', userSchema)
 
